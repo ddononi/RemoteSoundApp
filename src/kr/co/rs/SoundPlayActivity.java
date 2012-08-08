@@ -7,21 +7,28 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnTouchListener;
+import android.widget.ImageView;
 import android.widget.MediaController;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 /**
  * 리스트 아이템 선택후 가져온 uri 정보값을 이용해 원격 동영상을 재생한다.
  */
-public class SoundPlayActivity extends Activity {
+public class SoundPlayActivity extends Activity implements OnTouchListener {
 	private VideoView videoView; // 동영상 비디오 뷰
 	private MediaController controller; // 재생 컨트롤럭
+	private ImageView logoView;
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.video_player);
+		logoView  = (ImageView)findViewById(R.id.logo);
 		videoView =(VideoView)findViewById(R.id.video_view); // 동영상을 보여줄 비디오뷰
 		Intent intent = getIntent();	// 이전 인텐트
 		// 인텐트에서 파일이름을 추출한후 url를 조립하여 경로를 만들어 준다.
@@ -39,9 +46,11 @@ public class SoundPlayActivity extends Activity {
 			videoView.setMediaController(controller);	// 동영상 뷰 컨트롤러 포함
 			videoView.start();	// 동영상 시작
 		}
-
+		logoView.setOnTouchListener(this);
 		doStartService();
 	}
+	
+	
 
 	/**
 	 * 엑티비티 종료시 동영상 멈추기
@@ -83,6 +92,28 @@ public class SoundPlayActivity extends Activity {
     	}
     	return false;
     }
+
+
+
+	@Override
+	public boolean onTouch(View v, MotionEvent event) {
+		if(event.getAction() == MotionEvent.ACTION_DOWN){
+			/*
+			if(videoView.isPlaying() == false){
+				return false;
+			}
+			*/
+			int position = videoView.getCurrentPosition();
+			int width = logoView.getWidth();
+			//Toast.makeText(this, event.getX() + "          xx    "  + width , Toast.LENGTH_SHORT).show();
+			if(event.getX() <  width / 2){	// 좌측을 터치시 뒤감기
+				videoView.seekTo(position - 500);
+			}else{								// 우측을 터치시 앞으로 이동
+				videoView.seekTo(position +  500);
+			}
+		}
+		return false;
+	}
 
 	/** 옵션 메뉴 만들기 */
 	/*
