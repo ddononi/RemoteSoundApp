@@ -11,18 +11,20 @@ import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-public class MyReceiver extends BroadcastReceiver {
+public class SoundCheckReceiver extends BroadcastReceiver {
 	private final int YOURAPP_NOTIFICATION_ID = 1;	// 앱 아이디값
 	private SharedPreferences sp;				// 소리 및 진동 설정
+	private String filename;					// 업로드된 파일명
 	@Override
 	public void onReceive(final Context context, final Intent intent) {
-		Log.i("homepage", "broadcast catch!!");
+		Log.i("video", "broadcast catch!!");
+		filename = intent.getStringExtra("filename");
 		sp = PreferenceManager.getDefaultSharedPreferences(context);	// 환경설정값 가져오기
-		showNotification(context, R.drawable.homepage);	// 통지하기
+		showNotification(context, R.drawable.icon32);	// 통지하기
 	}
 
 	/**
-	 *	상태바에 알람을 알리고 확인시 MyScheduleActivity로 이동시킨다.
+	 *	상태바에 알람을 알리고 확인시 엑티비티  이동시킨다.
 	 * @param context
 	 * @param statusBarIconID
 	 * 		상태바에 나타낼 아이콘
@@ -30,11 +32,13 @@ public class MyReceiver extends BroadcastReceiver {
 	private void showNotification(final Context context, final int statusBarIconID) {
 		// MyScheduleActivity 로 엑티비티 설정
 
-		Intent contentIntent = new Intent(context, WebClientActivity.class);
+		Intent contentIntent = new Intent(context, SoundPlayActivity.class);
+		contentIntent.putExtra("filename", this.filename);
+		contentIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);	// 이전 엑티비티는 지워주자
 		// 알림클릭시 이동할 엑티비티 설정
 		PendingIntent theappIntent = PendingIntent.getActivity(context, 0,contentIntent, 0);
-		CharSequence title = "홈페이지"; // 알림 타이틀
-		CharSequence message = "새로운 공지사항이 도착했습니다."; // 알림 내용
+		CharSequence title = "사운드업로드"; // 알림 타이틀
+		CharSequence message = "원격 사운드가 전송되었습니다."; // 알림 내용
 
 		Notification notif = new Notification(statusBarIconID, null,
 				System.currentTimeMillis());

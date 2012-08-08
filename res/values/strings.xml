@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <string name="hello">Hello World, RemoteSoundAppActivity!</string>
-    <string name="app_name">RemoteSoundApp</string>
-
+    <string name="app_name">원격사운드재생</string>
 </resources>
